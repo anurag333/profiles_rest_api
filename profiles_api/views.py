@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from profiles_api import serializers
+from rest_framework import viewsets
 
 
 class HelloApiView(APIView):
@@ -49,3 +50,46 @@ class HelloApiView(APIView):
         """Delete an object"""
 
         return Response({'method': 'DELETE'})
+
+
+class HelloViewSet(viewsets.ViewSet):
+    '''function for viewsets'''
+
+    serializer_class = serializers.HelloSerializer
+
+    def list(self, request):
+        '''return a hello message'''
+
+        a_viewset = [
+            '1st string',
+            '2nd string',
+            'third string',
+        ]
+
+        return Response({'message': 'Hello', 'a_viewset': a_viewset})
+
+    def create(self, request):
+        '''create a new hello msg'''
+        serializer = self.serializer_class(data=request.data)
+
+        if serializer.is_valid():
+            name = serializer.validated_data.get('name')
+            messgae = f"hello {name}"
+            return Response({'messgae': messgae})
+        else:
+            return Response(
+                serializer.errors,
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+    def retrive(self, request, pk=None):
+        '''handle getting an object by its id'''
+        return Response({'http_method': 'GET'})
+
+    def update(self, request, pk=None):
+        '''handle updating objects'''
+        return Response({'http_method': 'PUT'})
+
+    def delete(self, request, pk=None):
+        '''handle deleting objects'''
+        return Response({'http_method': 'DELETE'})
